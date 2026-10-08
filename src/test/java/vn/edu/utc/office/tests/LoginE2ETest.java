@@ -1,5 +1,6 @@
 package vn.edu.utc.office.tests;
 
+import io.qameta.allure.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -29,7 +30,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  * - Strictly NO Thread.sleep() calls [Slide p.63]
  * - Registers ScreenshotWatcher extension for automatic failure screenshots [Slide p.61]
  * - Data-Driven Testing via Microsoft Excel (LoginTestCases.xlsx)
+ * - Integrated with Allure Report (@Epic, @Feature, @Story, @Severity, @Description)
  */
+@Epic("Hệ thống Văn phòng điện tử UTC")
+@Feature("Quản lý Xác thực và Đăng nhập")
 @ExtendWith(ScreenshotWatcher.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class LoginE2ETest extends BaseTest {
@@ -68,7 +72,10 @@ public class LoginE2ETest extends BaseTest {
 
     @Test
     @Order(1)
-    @DisplayName("TC_LOGIN_01: Dang nhap thanh cong -> roi khoi trang Login (Slide p.54)")
+    @Story("Đăng nhập thành công với thông tin hợp lệ")
+    @Severity(SeverityLevel.BLOCKER)
+    @Description("Kiểm tra đăng nhập thành công bằng tài khoản thật đưa người dùng rời khỏi trang Login")
+    @DisplayName("TC_LOGIN_01: Đăng nhập thành công -> rời khỏi trang Login (Slide p.54)")
     public void test_TC_LOGIN_01_validCredentials_leavesLoginPage() {
         // Slide p.54: "Tai khoan that lay tu bien moi truong, khong bao gio viet mat khau vao code"
         Assumptions.assumeTrue(System.getenv("UTC_USER") != null,
@@ -89,7 +96,10 @@ public class LoginE2ETest extends BaseTest {
 
     @Test
     @Order(2)
-    @DisplayName("TC_LOGIN_02: Sai mat khau -> van o lai trang Login (Slide p.55)")
+    @Story("Đăng nhập thất bại do sai mật khẩu")
+    @Severity(SeverityLevel.CRITICAL)
+    @Description("Hệ thống từ chối truy cập và ở lại trang đăng nhập khi mật khẩu sai")
+    @DisplayName("TC_LOGIN_02: Sai mật khẩu -> vẫn ở lại trang Login (Slide p.55)")
     public void test_TC_LOGIN_02_invalidPassword_staysOnLoginPage() {
         loginPage.loginAs("student_test", "WrongPassword!99");
 
@@ -103,7 +113,10 @@ public class LoginE2ETest extends BaseTest {
 
     @Test
     @Order(3)
-    @DisplayName("TC_LOGIN_03: Tai khoan khong ton tai -> tu choi xac thuc")
+    @Story("Đăng nhập thất bại do tài khoản không tồn tại")
+    @Severity(SeverityLevel.CRITICAL)
+    @Description("Hệ thống từ chối xác thực tài khoản không tồn tại trên hệ thống")
+    @DisplayName("TC_LOGIN_03: Tài khoản không tồn tại -> từ chối xác thực")
     public void test_TC_LOGIN_03_nonExistentAccount_loginFailed() {
         loginPage.loginAs("unknown_account_xyz", "AnyPassword@123");
 
@@ -115,7 +128,10 @@ public class LoginE2ETest extends BaseTest {
 
     @Test
     @Order(4)
-    @DisplayName("TC_LOGIN_04: Bo trong ca Ten dang nhap va Mat khau -> hien validation")
+    @Story("Validation cảnh báo khi bỏ trống cả tài khoản và mật khẩu")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Hệ thống ngăn chặn gửi form rỗng và giữ người dùng ở lại trang đăng nhập")
+    @DisplayName("TC_LOGIN_04: Bỏ trống cả Tên đăng nhập và Mật khẩu -> hiện validation")
     public void test_TC_LOGIN_04_emptyCredentials_validationError() {
         loginPage.loginAs("", "");
 
@@ -127,7 +143,10 @@ public class LoginE2ETest extends BaseTest {
 
     @Test
     @Order(5)
-    @DisplayName("TC_LOGIN_05: Bo trong mat khau -> kiem tra validation (Slide p.63)")
+    @Story("Validation cảnh báo khi bỏ trống mật khẩu")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Hệ thống yêu cầu nhập mật khẩu khi người dùng chỉ nhập tên đăng nhập")
+    @DisplayName("TC_LOGIN_05: Bỏ trống mật khẩu -> kiểm tra validation (Slide p.63)")
     public void test_TC_LOGIN_05_missingPassword_staysOnLoginPage() {
         loginPage.loginAs("student_test", "");
 
@@ -140,7 +159,10 @@ public class LoginE2ETest extends BaseTest {
 
     @Test
     @Order(6)
-    @DisplayName("TC_LOGIN_06: Bo trong Ten dang nhap nhung co nhap Mat khau")
+    @Story("Validation cảnh báo khi bỏ trống tên đăng nhập")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Hệ thống yêu cầu nhập tên đăng nhập khi người dùng chỉ nhập mật khẩu")
+    @DisplayName("TC_LOGIN_06: Bỏ trống Tên đăng nhập nhưng có nhập Mật khẩu")
     public void test_TC_LOGIN_06_missingUsername_validationError() {
         loginPage.loginAs("", "Utc@2026Password");
 
@@ -152,7 +174,10 @@ public class LoginE2ETest extends BaseTest {
 
     @Test
     @Order(7)
-    @DisplayName("TC_LOGIN_07: Dang nhap kem tich chon Ghi nho dang nhap (Checkbox)")
+    @Story("Tương tác tùy chọn ghi nhớ đăng nhập")
+    @Severity(SeverityLevel.MINOR)
+    @Description("Người dùng tích chọn hộp kiểm Ghi nhớ đăng nhập và gửi form")
+    @DisplayName("TC_LOGIN_07: Đăng nhập kèm tích chọn Ghi nhớ đăng nhập (Checkbox)")
     public void test_TC_LOGIN_07_rememberMeCheckbox_checked() {
         loginPage.clickRememberMe();
         loginPage.loginAs("student_test", "Utc@2026Password");
@@ -165,7 +190,10 @@ public class LoginE2ETest extends BaseTest {
 
     @Test
     @Order(8)
-    @DisplayName("TC_LOGIN_08: Kiem tra phong chong tan cong SQL Injection")
+    @Story("Bảo mật an toàn trước tấn công SQL Injection")
+    @Severity(SeverityLevel.BLOCKER)
+    @Description("Hệ thống ngăn chặn chuỗi payload SQL Injection tại ô đăng nhập và giữ an toàn")
+    @DisplayName("TC_LOGIN_08: Kiểm tra phòng chống tấn công SQL Injection")
     public void test_TC_LOGIN_08_sqlInjection_securityCheck() {
         loginPage.loginAs("' OR '1'='1", "' OR '1'='1");
 
@@ -193,7 +221,10 @@ public class LoginE2ETest extends BaseTest {
     @ParameterizedTest(name = "[{index}] {1}: {2}")
     @MethodSource("provideExcelData")
     @Order(9)
-    @DisplayName("Kiem thu Data-Driven tong hop tu file Excel")
+    @Story("Kiểm thử Data-Driven tự động đọc từ file Excel")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Thực thi tự động 8 kịch bản kiểm thử đọc từ test-data/LoginTestCases.xlsx và cập nhật kết quả ngược lại file Excel")
+    @DisplayName("Kiểm thử Data-Driven tổng hợp từ file Excel")
     public void testLoginWithExcelData(int rowIndex,
                                        String tcId,
                                        String scenario,
@@ -225,36 +256,36 @@ public class LoginE2ETest extends BaseTest {
 
             switch (tcId) {
                 case "TC_LOGIN_01":
-                    actualResult = "Chuyen huong thanh cong toi he thong, URL: " + currentUrl;
+                    actualResult = "Chuyển hướng thành công tới hệ thống, URL: " + currentUrl;
                     break;
                 case "TC_LOGIN_02":
-                    actualResult = "He thong tu choi truy cap va o lai trang dang nhap do sai mat khau";
+                    actualResult = "Hệ thống từ chối truy cập và ở lại trang đăng nhập do sai mật khẩu";
                     break;
                 case "TC_LOGIN_03":
-                    actualResult = "He thong tu choi xac thuc tai khoan khong ton tai";
+                    actualResult = "Hệ thống từ chối xác thực tài khoản không tồn tại";
                     break;
                 case "TC_LOGIN_04":
-                    actualResult = "Khong cho phep gui form rong, hien thi canh bao validation";
+                    actualResult = "Không cho phép gửi form rỗng, hiển thị cảnh báo validation";
                     break;
                 case "TC_LOGIN_05":
-                    actualResult = "Chan gui form rong mat khau, hien thi canh bao hop le";
+                    actualResult = "Chặn gửi form rỗng mật khẩu, hiển thị cảnh báo hợp lệ";
                     break;
                 case "TC_LOGIN_06":
-                    actualResult = "Chan gui form rong ten dang nhap, hien thi canh bao hop le";
+                    actualResult = "Chặn gửi form rỗng tên đăng nhập, hiển thị cảnh báo hợp lệ";
                     break;
                 case "TC_LOGIN_07":
-                    actualResult = "Tich chon ghi nho thanh cong va gui du lieu dang nhap hop le";
+                    actualResult = "Tích chọn ghi nhớ thành công và gửi dữ liệu đăng nhập hợp lệ";
                     break;
                 case "TC_LOGIN_08":
-                    actualResult = "He thong ngan chan chuoi payload SQL Injection an toan";
+                    actualResult = "Hệ thống ngăn chặn chuỗi payload SQL Injection an toàn";
                     break;
                 default:
-                    actualResult = "Da thuc thi thanh cong, URL: " + currentUrl;
+                    actualResult = "Đã thực thi thành công, URL: " + currentUrl;
                     break;
             }
 
             if (!errorMsg.isEmpty()) {
-                actualResult += " (Thong bao UI: " + errorMsg + ")";
+                actualResult += " (Thông báo UI: " + errorMsg + ")";
             }
 
             boolean passed;
@@ -273,7 +304,7 @@ public class LoginE2ETest extends BaseTest {
                     .isTrue();
 
         } catch (Exception e) {
-            actualResult = "Loi ngoai le: " + e.getMessage();
+            actualResult = "Lỗi ngoại lệ: " + e.getMessage();
             status = "FAIL";
             Assertions.fail(actualResult);
         } finally {
@@ -282,5 +313,4 @@ public class LoginE2ETest extends BaseTest {
             }
         }
     }
-
 }

@@ -1,13 +1,14 @@
 # UTC Electronic Office - Kiểm Thử Giao Diện Web Tự Động
 
 Dự án kiểm thử tự động giao diện web (Web UI Testing) cho hệ thống Văn phòng điện tử UTC (https://vanphongdientu.utc.edu.vn/Login).
-Dự án được xây dựng theo mô hình Page Object Model (POM) và kiểm thử hướng dữ liệu (Data-Driven Testing) sử dụng Java, Selenium WebDriver và JUnit 5.
+Dự án được xây dựng theo mô hình Page Object Model (POM) và kiểm thử hướng dữ liệu (Data-Driven Testing) sử dụng Java, Selenium WebDriver, JUnit 5 và Allure Report.
 
 ## 1. Công nghệ sử dụng
 
 - Ngôn ngữ: Java (JDK 17 trở lên)
 - Công cụ kiểm thử: Selenium WebDriver 4.29.0
 - Framework kiểm thử: JUnit 5 (Jupiter)
+- Báo cáo kiểm thử trực quan: Allure Report 2.27.0
 - Thư viện Assertion: AssertJ 3.25.3
 - Thư viện xử lý Excel: Apache POI 5.3.0
 - Công cụ build và quản lý thư viện: Apache Maven 3.8+
@@ -16,7 +17,7 @@ Dự án được xây dựng theo mô hình Page Object Model (POM) và kiểm 
 
 ```text
 .
-|-- pom.xml                                  # File cấu hình thư viện và build Maven
+|-- pom.xml                                  # File cấu hình thư viện và build Maven (kèm Allure Plugin)
 |-- README.md                                # Hướng dẫn cài đặt và sử dụng
 |-- test-data/
 |   `-- LoginTestCases.xlsx                  # File Excel chứa bộ dữ liệu kiểm thử và kết quả
@@ -27,7 +28,7 @@ Dự án được xây dựng theo mô hình Page Object Model (POM) và kiểm 
                 |-- base/
                 |   |-- BasePage.java        # Lớp cơ sở trang: triển khai Explicit Wait (click, type, getText)
                 |   |-- BaseTest.java        # Lớp cơ sở test: quản lý vòng đời WebDriver và chế độ headless
-                |   `-- ScreenshotWatcher.java # JUnit 5 Extension: tự động chụp ảnh màn hình khi test thất bại
+                |   `-- ScreenshotWatcher.java # JUnit 5 Extension: đính kèm screenshot vào Allure và lưu cục bộ
                 |-- demo/
                 |   `-- BrowserLaunchDemoTest.java # Test kiểm tra khởi tạo và đóng trình duyệt
                 |-- pages/
@@ -36,7 +37,7 @@ Dự án được xây dựng theo mô hình Page Object Model (POM) và kiểm 
                 |-- utils/
                 |   `-- ExcelUtils.java      # Tiện ích đọc và ghi dữ liệu file Excel
                 `-- tests/
-                    `-- LoginE2ETest.java    # Bộ kiểm thử JUnit 5 chính và Data-Driven từ file Excel
+                    `-- LoginE2ETest.java    # Bộ kiểm thử JUnit 5 chính, gắn nhãn Allure và DDT từ Excel
 ```
 
 ## 3. Yêu cầu môi trường
@@ -53,14 +54,30 @@ java -version
 mvn -version
 ```
 
-## 4. Hướng dẫn chạy kiểm thử
+## 4. Hướng dẫn chạy kiểm thử và xem báo cáo Allure
 
-Mở Terminal hoặc Command Prompt tại thư mục gốc của dự án và sử dụng các câu lệnh tiêu chuẩn sau:
+Mở Terminal hoặc Command Prompt tại thư mục gốc của dự án và sử dụng các câu lệnh sau:
 
 ### Chạy toàn bộ các ca kiểm thử
 ```bash
 mvn test
 ```
+
+### Xem báo cáo Allure Report trực quan trên trình duyệt
+Sau khi chạy kiểm thử xong, chạy lệnh sau để mở giao diện báo cáo Allure trên trình duyệt:
+```bash
+mvn allure:serve
+```
+Lệnh này sẽ tự động khởi động một Web Server cục bộ và mở Dashboard Allure hiển thị biểu đồ tỷ lệ đạt/trượt, thời gian chạy, kịch bản chi tiết và ảnh chụp màn hình khi có lỗi.
+
+Để dừng server Allure, nhấn tổ hợp phím `Ctrl + C` tại cửa sổ dòng lệnh.
+
+### Tạo file báo cáo tĩnh HTML (Offline Report)
+Nếu cần xuất báo cáo thành thư mục trang web tĩnh để gửi đi hoặc lưu trữ:
+```bash
+mvn allure:report
+```
+Báo cáo HTML sẽ được lưu tại thư mục: `target/site/allure-maven-plugin/`.
 
 ### Chạy bộ kiểm thử đăng nhập chính (hiển thị trình duyệt Chrome)
 ```bash
@@ -101,8 +118,9 @@ Lưu ý: Sau mỗi lần chạy kiểm thử, kết quả thực tế (Actual Re
 
 ## 6. Cơ chế chụp ảnh màn hình khi có lỗi
 
-Nếu có bất kỳ ca kiểm thử nào thất bại (FAIL), lớp `ScreenshotWatcher` sẽ tự động chụp lại ảnh màn hình tại thời điểm phát sinh lỗi và lưu vào thư mục:
-
+Nếu có bất kỳ ca kiểm thử nào thất bại (FAIL), lớp `ScreenshotWatcher` sẽ:
+1. Tự động đính kèm ảnh chụp màn hình trực tiếp vào báo cáo **Allure Report** tương ứng với ca kiểm thử bị lỗi.
+2. Đồng thời lưu một bản ảnh chụp màn hình vào thư mục:
 ```text
 target/screenshots/
 ```
