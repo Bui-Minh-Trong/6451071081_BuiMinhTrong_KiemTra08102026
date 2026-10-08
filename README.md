@@ -99,7 +99,7 @@ Nếu muốn kiểm thử kịch bản đăng nhập thành công vào trang ch�
 
 ## 5. Danh sách ca kiểm thử trong file Excel
 
-Dữ liệu kiểm thử được quản lý tại file `test-data/LoginTestCases.xlsx` bao gồm 8 kịch bản:
+Dữ liệu kiểm thử được quản lý tại file `test-data/LoginTestCases.xlsx` bao gồm 13 kịch bản:
 
 - TC_LOGIN_01: Đăng nhập thành công với thông tin tài khoản hợp lệ (Happy Path)
 - TC_LOGIN_02: Đăng nhập thất bại do nhập sai mật khẩu (Negative Test)
@@ -107,8 +107,13 @@ Dữ liệu kiểm thử được quản lý tại file `test-data/LoginTestCase
 - TC_LOGIN_04: Bỏ trống cả Tên đăng nhập và Mật khẩu (Validation Test)
 - TC_LOGIN_05: Nhập Tên đăng nhập nhưng bỏ trống Mật khẩu (Validation Test)
 - TC_LOGIN_06: Bỏ trống Tên đăng nhập nhưng có nhập Mật khẩu (Validation Test)
-- TC_LOGIN_07: Đăng nhập kèm tích chọn checkbox Ghi nhớ đăng nhập
-- TC_LOGIN_08: Kiểm tra phòng chống tấn công SQL Injection
+- TC_LOGIN_07: Đăng nhập kèm tích chọn checkbox Ghi nhớ đăng nhập (UI Interaction)
+- TC_LOGIN_08: Kiểm tra phòng chống tấn công SQL Injection (Security Testing)
+- TC_LOGIN_09: Kiểm tra phòng chống tấn công Cross-Site Scripting - XSS (Security Testing)
+- TC_LOGIN_10: Đăng nhập với Tên đăng nhập chứa khoảng trắng ở đầu và cuối (Whitespace Trimming)
+- TC_LOGIN_11: Kiểm tra độ dài vượt ngưỡng tối đa tại ô Tên đăng nhập (Boundary Value Analysis)
+- TC_LOGIN_12: Đăng nhập với Tên đăng nhập chứa toàn ký tự đặc biệt (Equivalence Partitioning)
+- TC_LOGIN_13: Kiểm tra thuộc tính ẩn ký tự tại ô Mật khẩu - type='password' (Usability & Masking UI)
 
 Lưu ý: Sau mỗi lần chạy kiểm thử, kết quả thực tế (Actual Result) và trạng thái (PASS/FAIL) sẽ được hệ thống tự động ghi nhận và cập nhật trực tiếp vào file Excel trên.
 
