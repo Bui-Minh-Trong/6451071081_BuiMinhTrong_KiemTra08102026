@@ -101,4 +101,16 @@ public class LoginE2ETest extends BaseTest {
         assertThat(loginPage.isOnLoginPage()).isTrue();
     }
 
+    @Test
+    @Order(3)
+    @DisplayName("TC_LOGIN_03: Tai khoan khong ton tai -> tu choi xac thuc")
+    public void test_TC_LOGIN_03_nonExistentAccount_loginFailed() {
+        loginPage.loginAs("unknown_account_xyz", "AnyPassword@123");
+
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(d -> loginPage.isOnLoginPage());
+
+        assertThat(loginPage.isOnLoginPage()).isTrue();
+    }
+
 }
