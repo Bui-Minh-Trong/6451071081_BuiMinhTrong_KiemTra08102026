@@ -252,6 +252,22 @@ public class LoginE2ETest extends BaseTest {
         assertThat(loginPage.isOnLoginPage()).isTrue();
     }
 
+
+    @Test
+    @Order(12)
+    @Story("Phân vùng tương đương: Nhập ký tự đặc biệt không hợp lệ")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Kiểm tra form đăng nhập từ chối xác thực đối với tài khoản chỉ chứa ký tự đặc biệt")
+    @DisplayName("TC_LOGIN_12: Tên đăng nhập chứa toàn ký tự đặc biệt")
+    public void test_TC_LOGIN_12_specialCharactersInput_rejected() {
+        loginPage.loginAs("!@#$%^&*()_+{}[]", "Password@123");
+
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(d -> loginPage.isOnLoginPage());
+
+        assertThat(loginPage.isOnLoginPage()).isTrue();
+    }
+
     // ----------------------------------------------------------------------------------
     // Data-Driven Testing (Runs all scenarios defined in test-data/LoginTestCases.xlsx)
     // ----------------------------------------------------------------------------------
