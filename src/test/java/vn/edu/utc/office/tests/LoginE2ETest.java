@@ -203,6 +203,22 @@ public class LoginE2ETest extends BaseTest {
         assertThat(loginPage.isOnLoginPage()).isTrue();
     }
 
+
+    @Test
+    @Order(9)
+    @Story("Bảo mật: Phòng chống tấn công Cross-Site Scripting (XSS)")
+    @Severity(SeverityLevel.BLOCKER)
+    @Description("Đảm bảo form đăng nhập không thực thi mã script độc hại khi chèn vào ô tài khoản")
+    @DisplayName("TC_LOGIN_09: Kiểm tra bảo mật chống tấn công XSS")
+    public void test_TC_LOGIN_09_xssPayload_securityCheck() {
+        loginPage.loginAs("<script>alert('XSS')</script>", "TestPassword@123");
+
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(d -> loginPage.isOnLoginPage());
+
+        assertThat(loginPage.isOnLoginPage()).isTrue();
+    }
+
     // ----------------------------------------------------------------------------------
     // Data-Driven Testing (Runs all scenarios defined in test-data/LoginTestCases.xlsx)
     // ----------------------------------------------------------------------------------
