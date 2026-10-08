@@ -235,6 +235,23 @@ public class LoginE2ETest extends BaseTest {
         assertThat(loginPage.isOnLoginPage()).isTrue();
     }
 
+
+    @Test
+    @Order(11)
+    @Story("Giá trị biên: Kiểm tra độ dài chuỗi cực đại (Max Length Boundary)")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Đảm bảo ô tài khoản không bị tràn bộ đệm hoặc crash hệ thống khi nhập chuỗi vượt độ dài thông thường")
+    @DisplayName("TC_LOGIN_11: Kiểm tra độ dài vượt ngưỡng tại ô Tên đăng nhập")
+    public void test_TC_LOGIN_11_maxLengthBoundary_handledSafely() {
+        String longUsername = "user_boundary_test_" + "x".repeat(250);
+        loginPage.loginAs(longUsername, "Password@123");
+
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(d -> loginPage.isOnLoginPage());
+
+        assertThat(loginPage.isOnLoginPage()).isTrue();
+    }
+
     // ----------------------------------------------------------------------------------
     // Data-Driven Testing (Runs all scenarios defined in test-data/LoginTestCases.xlsx)
     // ----------------------------------------------------------------------------------
