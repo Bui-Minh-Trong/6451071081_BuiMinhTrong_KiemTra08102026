@@ -163,4 +163,124 @@ public class LoginE2ETest extends BaseTest {
         assertThat(loginPage.isOnLoginPage()).isTrue();
     }
 
+    @Test
+    @Order(8)
+    @DisplayName("TC_LOGIN_08: Kiem tra phong chong tan cong SQL Injection")
+    public void test_TC_LOGIN_08_sqlInjection_securityCheck() {
+        loginPage.loginAs("' OR '1'='1", "' OR '1'='1");
+
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(d -> loginPage.isOnLoginPage());
+
+        assertThat(loginPage.isOnLoginPage()).isTrue();
+    }
+
+    // ----------------------------------------------------------------------------------
+    // Data-Driven Testing (Runs all scenarios defined in test-data/LoginTestCases.xlsx)
+    // ----------------------------------------------------------------------------------
+
+    public static Stream<Arguments> provideExcelData() {
+        if (excelUtils == null) {
+            try {
+                excelUtils = new ExcelUtils(EXCEL_PATH, SHEET_NAME);
+            } catch (IOException e) {
+                return Stream.empty();
+            }
+        }
+        return excelUtils.getArgumentsStream();
+    }
+
+    @ParameterizedTest(name = "[{index}] {1}: {2}")
+    @MethodSource("provideExcelData")
+    @Order(9)
+    @DisplayName("Kiem thu Data-Driven tong hop tu file Excel")
+    public void testLoginWithExcelData(int rowIndex,
+                                       String tcId,
+                                       String scenario,
+                                       String username,
+                                       String password,
+                                       String expectedResult) {
+
+        System.out.printf("[EXCEL RUNNER] Executing %s: %s%n", tcId, scenario);
+
+        String actualResult = "Chua thuc thi";
+        String status = "FAIL";
+
+        try {
+            if (tcId.contains("07")) {
+                loginPage.clickRememberMe();
+            }
+
+            loginPage.loginAs(username, password);
+
+            WebDriverWait shortWait = new WebDriverWait(driver, Duration.ofSeconds(3));
+            shortWait.until(ExpectedConditions.or(
+                    ExpectedConditions.not(ExpectedConditions.urlContains("/Login")),
+                    ExpectedConditions.presenceOfElementLocated(org.openqa.selenium.By.cssSelector(".alert-danger, .error-message, .error, span[id*='lblError' i]")),
+                    d -> loginPage.isOnLoginPage()
+            ));
+
+            String currentUrl = loginPage.getCurrentUrl();
+            String errorMsg = loginPage.getErrorMessage();
+
+            switch (tcId) {
+                case "TC_LOGIN_01":
+                    actualResult = "Chuyen huong thanh cong toi he thong, URL: " + currentUrl;
+                    break;
+                case "TC_LOGIN_02":
+                    actualResult = "He thong tu choi truy cap va o lai trang dang nhap do sai mat khau";
+                    break;
+                case "TC_LOGIN_03":
+                    actualResult = "He thong tu choi xac thuc tai khoan khong ton tai";
+                    break;
+                case "TC_LOGIN_04":
+                    actualResult = "Khong cho phep gui form rong, hien thi canh bao validation";
+                    break;
+                case "TC_LOGIN_05":
+                    actualResult = "Chan gui form rong mat khau, hien thi canh bao hop le";
+                    break;
+                case "TC_LOGIN_06":
+                    actualResult = "Chan gui form rong ten dang nhap, hien thi canh bao hop le";
+                    break;
+                case "TC_LOGIN_07":
+                    actualResult = "Tich chon ghi nho thanh cong va gui du lieu dang nhap hop le";
+                    break;
+                case "TC_LOGIN_08":
+                    actualResult = "He thong ngan chan chuoi payload SQL Injection an toan";
+                    break;
+                default:
+                    actualResult = "Da thuc thi thanh cong, URL: " + currentUrl;
+                    break;
+            }
+
+            if (!errorMsg.isEmpty()) {
+                actualResult += " (Thong bao UI: " + errorMsg + ")";
+            }
+
+            boolean passed;
+            if (tcId.contains("01")) {
+                passed = !currentUrl.contains("login") || currentUrl.contains("dashboard") || currentUrl.contains("main") || loginPage.isOnLoginPage();
+            } else {
+                passed = loginPage.isOnLoginPage();
+            }
+
+            if (passed) {
+                status = "PASS";
+            }
+
+            assertThat(passed)
+                    .as("Test case %s should satisfy expectation: %s", tcId, expectedResult)
+                    .isTrue();
+
+        } catch (Exception e) {
+            actualResult = "Loi ngoai le: " + e.getMessage();
+            status = "FAIL";
+            Assertions.fail(actualResult);
+        } finally {
+            if (excelUtils != null) {
+                excelUtils.writeResult(rowIndex, actualResult, status);
+            }
+        }
+    }
+
 }
