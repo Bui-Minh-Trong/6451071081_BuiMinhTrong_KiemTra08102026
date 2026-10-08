@@ -150,4 +150,17 @@ public class LoginE2ETest extends BaseTest {
         assertThat(loginPage.isOnLoginPage()).isTrue();
     }
 
+    @Test
+    @Order(7)
+    @DisplayName("TC_LOGIN_07: Dang nhap kem tich chon Ghi nho dang nhap (Checkbox)")
+    public void test_TC_LOGIN_07_rememberMeCheckbox_checked() {
+        loginPage.clickRememberMe();
+        loginPage.loginAs("student_test", "Utc@2026Password");
+
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(d -> loginPage.isOnLoginPage());
+
+        assertThat(loginPage.isOnLoginPage()).isTrue();
+    }
+
 }
