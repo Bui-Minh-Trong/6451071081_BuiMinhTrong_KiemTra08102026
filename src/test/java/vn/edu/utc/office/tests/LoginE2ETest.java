@@ -125,4 +125,17 @@ public class LoginE2ETest extends BaseTest {
         assertThat(loginPage.isOnLoginPage()).isTrue();
     }
 
+    @Test
+    @Order(5)
+    @DisplayName("TC_LOGIN_05: Bo trong mat khau -> kiem tra validation (Slide p.63)")
+    public void test_TC_LOGIN_05_missingPassword_staysOnLoginPage() {
+        loginPage.loginAs("student_test", "");
+
+        // Explicit wait ensures validation state is registered
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(d -> loginPage.isOnLoginPage());
+
+        assertThat(loginPage.isOnLoginPage()).isTrue();
+    }
+
 }
