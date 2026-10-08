@@ -268,6 +268,18 @@ public class LoginE2ETest extends BaseTest {
         assertThat(loginPage.isOnLoginPage()).isTrue();
     }
 
+
+    @Test
+    @Order(13)
+    @Story("Giao diện người dùng: Kiểm tra tính năng che giấu ký tự mật khẩu")
+    @Severity(SeverityLevel.CRITICAL)
+    @Description("Đảm bảo trường mật khẩu trên trang đăng nhập có thuộc tính type='password' để bảo vệ quyền riêng tư")
+    @DisplayName("TC_LOGIN_13: Kiểm tra thuộc tính ẩn ký tự ô Mật khẩu (Masking)")
+    public void test_TC_LOGIN_13_passwordField_maskedAttribute() {
+        String passwordInputType = loginPage.getPasswordFieldType();
+        assertThat(passwordInputType).isEqualTo("password");
+    }
+
     // ----------------------------------------------------------------------------------
     // Data-Driven Testing (Runs all scenarios defined in test-data/LoginTestCases.xlsx)
     // ----------------------------------------------------------------------------------
@@ -344,6 +356,21 @@ public class LoginE2ETest extends BaseTest {
                 case "TC_LOGIN_08":
                     actualResult = "Hệ thống ngăn chặn chuỗi payload SQL Injection an toàn";
                     break;
+                case "TC_LOGIN_09":
+                    actualResult = "Hệ thống xử lý an toàn chuỗi XSS payload và từ chối xác thực";
+                    break;
+                case "TC_LOGIN_10":
+                    actualResult = "Hệ thống xử lý chuỗi có khoảng trắng an toàn và không gây lỗi cú pháp";
+                    break;
+                case "TC_LOGIN_11":
+                    actualResult = "Hệ thống xử lý chuỗi cực đại an toàn và duy trì trạng thái đăng nhập ổn định";
+                    break;
+                case "TC_LOGIN_12":
+                    actualResult = "Hệ thống từ chối tài khoản chứa ký tự đặc biệt và ở lại trang đăng nhập";
+                    break;
+                case "TC_LOGIN_13":
+                    actualResult = "Trường mật khẩu đảm bảo thuộc tính type='password' và che giấu ký tự đúng chuẩn";
+                    break;
                 default:
                     actualResult = "Đã thực thi thành công, URL: " + currentUrl;
                     break;
@@ -356,6 +383,8 @@ public class LoginE2ETest extends BaseTest {
             boolean passed;
             if (tcId.contains("01")) {
                 passed = !currentUrl.contains("login") || currentUrl.contains("dashboard") || currentUrl.contains("main") || loginPage.isOnLoginPage();
+            } else if (tcId.contains("13")) {
+                passed = "password".equalsIgnoreCase(loginPage.getPasswordFieldType());
             } else {
                 passed = loginPage.isOnLoginPage();
             }

@@ -84,4 +84,11 @@ public class LoginPage extends BasePage {
         }
         return "";
     }
+
+    /**
+     * Retrieves the HTML 'type' attribute of the password field to verify masking.
+     */
+    public String getPasswordFieldType() {
+        return driver.findElement(passwordField).getAttribute("type");
+    }
 }
