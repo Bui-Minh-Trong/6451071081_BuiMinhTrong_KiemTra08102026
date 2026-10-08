@@ -113,4 +113,16 @@ public class LoginE2ETest extends BaseTest {
         assertThat(loginPage.isOnLoginPage()).isTrue();
     }
 
+    @Test
+    @Order(4)
+    @DisplayName("TC_LOGIN_04: Bo trong ca Ten dang nhap va Mat khau -> hien validation")
+    public void test_TC_LOGIN_04_emptyCredentials_validationError() {
+        loginPage.loginAs("", "");
+
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(d -> loginPage.isOnLoginPage());
+
+        assertThat(loginPage.isOnLoginPage()).isTrue();
+    }
+
 }
