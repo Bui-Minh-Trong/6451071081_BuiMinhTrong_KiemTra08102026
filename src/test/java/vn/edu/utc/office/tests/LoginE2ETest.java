@@ -138,4 +138,16 @@ public class LoginE2ETest extends BaseTest {
         assertThat(loginPage.isOnLoginPage()).isTrue();
     }
 
+    @Test
+    @Order(6)
+    @DisplayName("TC_LOGIN_06: Bo trong Ten dang nhap nhung co nhap Mat khau")
+    public void test_TC_LOGIN_06_missingUsername_validationError() {
+        loginPage.loginAs("", "Utc@2026Password");
+
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(d -> loginPage.isOnLoginPage());
+
+        assertThat(loginPage.isOnLoginPage()).isTrue();
+    }
+
 }
