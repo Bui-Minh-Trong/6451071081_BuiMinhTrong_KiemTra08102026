@@ -66,4 +66,25 @@ public class LoginE2ETest extends BaseTest {
         loginPage = new LoginPage(driver).open();
     }
 
+    @Test
+    @Order(1)
+    @DisplayName("TC_LOGIN_01: Dang nhap thanh cong -> roi khoi trang Login (Slide p.54)")
+    public void test_TC_LOGIN_01_validCredentials_leavesLoginPage() {
+        // Slide p.54: "Tai khoan that lay tu bien moi truong, khong bao gio viet mat khau vao code"
+        Assumptions.assumeTrue(System.getenv("UTC_USER") != null,
+                "Bo qua vi chua cau hinh bien moi truong UTC_USER va UTC_PASS cho tai khoan that");
+
+        String username = System.getenv("UTC_USER");
+        String password = System.getenv("UTC_PASS");
+
+        HomePage homePage = loginPage.loginAs(username, password);
+
+        // Explicit Wait: wait until URL changes away from /Login (No Thread.sleep)
+        new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.not(ExpectedConditions.urlContains("/Login")));
+
+        // AssertJ Fluent Assertion (Slide p.54)
+        assertThat(loginPage.isOnLoginPage()).isFalse();
+    }
+
 }
