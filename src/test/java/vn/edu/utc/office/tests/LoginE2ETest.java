@@ -219,6 +219,22 @@ public class LoginE2ETest extends BaseTest {
         assertThat(loginPage.isOnLoginPage()).isTrue();
     }
 
+
+    @Test
+    @Order(10)
+    @Story("Xử lý dữ liệu: Khoảng trắng thừa ở đầu và cuối chuỗi")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Kiểm tra hệ thống xử lý an toàn khi người dùng vô tình nhập khoảng trắng trước hoặc sau tên đăng nhập")
+    @DisplayName("TC_LOGIN_10: Tên đăng nhập chứa khoảng trắng ở đầu và cuối")
+    public void test_TC_LOGIN_10_whitespaceHandling_loginCheck() {
+        loginPage.loginAs("   student_test   ", "Utc@2026Password");
+
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(d -> loginPage.isOnLoginPage());
+
+        assertThat(loginPage.isOnLoginPage()).isTrue();
+    }
+
     // ----------------------------------------------------------------------------------
     // Data-Driven Testing (Runs all scenarios defined in test-data/LoginTestCases.xlsx)
     // ----------------------------------------------------------------------------------
