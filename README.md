@@ -11,12 +11,13 @@ Dự án được xây dựng theo mô hình Page Object Model (POM) và kiểm 
 - Báo cáo kiểm thử trực quan: Allure Report 2.27.0
 - Thư viện Assertion: AssertJ 3.25.3
 - Thư viện xử lý Excel: Apache POI 5.3.0
-- Công cụ build và quản lý thư viện: Apache Maven 3.8+
+- Công cụ build: Apache Maven (đã tích hợp sẵn Maven Wrapper `mvnw` / `mvnw.cmd`)
 
 ## 2. Cấu trúc thư mục
 
 ```text
 .
+|-- mvnw / mvnw.cmd                          # Maven Wrapper chạy trực tiếp không cần cài trước Maven
 |-- pom.xml                                  # File cấu hình thư viện và build Maven (kèm Allure Plugin)
 |-- README.md                                # Hướng dẫn cài đặt và sử dụng
 |-- test-data/
@@ -42,64 +43,59 @@ Dự án được xây dựng theo mô hình Page Object Model (POM) và kiểm 
 
 ## 3. Yêu cầu môi trường
 
-Để chạy được dự án trên bất kỳ máy tính nào (Windows, macOS, Linux), cần chuẩn bị:
-
+Để chạy dự án trên bất kỳ máy tính nào:
 1. Java Development Kit (JDK): Phiên bản 17 trở lên (đã cấu hình biến môi trường `JAVA_HOME`).
-2. Apache Maven: Phiên bản 3.8 trở lên (đã thêm thư mục `bin` vào biến môi trường `PATH`).
-3. Google Chrome: Phiên bản mới nhất (Selenium Manager sẽ tự động tải và cấu hình ChromeDriver tương thích).
+2. Google Chrome: Phiên bản mới nhất (Selenium Manager sẽ tự động tải và cấu hình ChromeDriver tương thích).
 
-Kiểm tra môi trường trong Terminal / Command Prompt:
-```bash
-java -version
-mvn -version
-```
+Lưu ý: Dự án đã tích hợp sẵn **Maven Wrapper (`mvnw`)**, do đó bạn **không cần cài đặt trước Maven** hay cấu hình biến môi trường `PATH` cho Maven trên máy.
 
 ## 4. Hướng dẫn chạy kiểm thử và xem báo cáo Allure
 
-Mở Terminal hoặc Command Prompt tại thư mục gốc của dự án và sử dụng các câu lệnh sau:
+Mở Terminal hoặc Command Prompt tại thư mục gốc của dự án và sử dụng các câu lệnh với bộ chạy tích hợp `.\mvnw`:
 
 ### Chạy toàn bộ các ca kiểm thử
-```bash
-mvn test
+```powershell
+.\mvnw test
 ```
-
-### Xem báo cáo Allure Report trực quan trên trình duyệt
-Sau khi chạy kiểm thử xong, chạy lệnh sau để mở giao diện báo cáo Allure trên trình duyệt:
-```bash
-mvn allure:serve
-```
-Lệnh này sẽ tự động khởi động một Web Server cục bộ và mở Dashboard Allure hiển thị biểu đồ tỷ lệ đạt/trượt, thời gian chạy, kịch bản chi tiết và ảnh chụp màn hình khi có lỗi.
-
-Để dừng server Allure, nhấn tổ hợp phím `Ctrl + C` tại cửa sổ dòng lệnh.
-
-### Tạo file báo cáo tĩnh HTML (Offline Report)
-Nếu cần xuất báo cáo thành thư mục trang web tĩnh để gửi đi hoặc lưu trữ:
-```bash
-mvn allure:report
-```
-Báo cáo HTML sẽ được lưu tại thư mục: `target/site/allure-maven-plugin/`.
 
 ### Chạy bộ kiểm thử đăng nhập chính (hiển thị trình duyệt Chrome)
-```bash
-mvn test -Dtest=LoginE2ETest
+```powershell
+.\mvnw test -Dtest=LoginE2ETest
 ```
 
 ### Chạy ở chế độ Headless (chạy ngầm, không mở cửa sổ trình duyệt)
-```bash
-mvn test -Dtest=LoginE2ETest -Dheadless=true
+```powershell
+.\mvnw test -Dtest=LoginE2ETest -Dheadless=true
 ```
 
 ### Chạy test demo khởi tạo trình duyệt (Smoke test)
-```bash
-mvn test -Dtest=BrowserLaunchDemoTest
+```powershell
+.\mvnw test -Dtest=BrowserLaunchDemoTest
 ```
+
+### Xem báo cáo Allure Report trực quan trên trình duyệt
+Sau khi chạy kiểm thử xong, chạy lệnh sau để mở giao diện báo cáo:
+```powershell
+.\mvnw allure:serve
+```
+Trình duyệt sẽ tự động mở trang Dashboard Allure hiển thị biểu đồ tỷ lệ đạt/trượt, thời gian chạy và ảnh chụp màn hình khi có lỗi.
+Nhấn `Ctrl + C` tại cửa sổ Terminal để dừng server khi xem xong.
+
+### Tạo file báo cáo tĩnh HTML (Offline Report)
+Nếu cần xuất báo cáo tĩnh HTML để lưu trữ hoặc gửi báo cáo:
+```powershell
+.\mvnw allure:report
+```
+Báo cáo HTML sẽ được lưu tại thư mục: `target/site/allure-maven-plugin/`.
 
 ### Chạy kiểm thử với tài khoản thật (tùy chọn)
 Nếu muốn kiểm thử kịch bản đăng nhập thành công vào trang chủ bằng tài khoản thực tế, truyền thông tin tài khoản qua tham số dòng lệnh:
-```bash
-mvn test -Dtest=LoginE2ETest -DUTC_USER="ten_dang_nhap" -DUTC_PASS="mat_khau"
+```powershell
+.\mvnw test -Dtest=LoginE2ETest -DUTC_USER="ten_dang_nhap" -DUTC_PASS="mat_khau"
 ```
 *(Nếu không truyền tài khoản thật, ca kiểm thử happy path sẽ tự động được bỏ qua - skip để tránh thất bại vì thiếu thông tin xác thực).*
+
+*(Lưu ý: Đối với hệ điều hành macOS hoặc Linux, thay `.\mvnw` bằng `./mvnw`)*.
 
 ## 5. Danh sách ca kiểm thử trong file Excel
 
